@@ -1,0 +1,13 @@
+bin
+obj
+*.suo
+*.user
+*.DotSettings
+.vs
+
+packages
+!packages/repositories.config
+
+_NCrunch_*
+*.ncrunchproject
+*.ncrunchsolution

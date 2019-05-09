@@ -74,7 +74,7 @@ namespace SassConverter
             //return success;
         }
 
-        public async Task<string> ExecuteProcess(string filePath)
+        public async Task<string> ExecuteProcess(string filePath, string cssFilePath)
         {
             if (!EnsurePackageInstalled())
                 return null;

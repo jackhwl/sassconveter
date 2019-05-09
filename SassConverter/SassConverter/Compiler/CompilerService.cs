@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using Tasks = System.Threading.Tasks;
 using EnvDTE;
+using System.Collections.Generic;
 
 namespace SassConverter
 {
@@ -30,10 +31,17 @@ namespace SassConverter
             return true;
         }
 
-        public static async Tasks.Task Compile(string sassFilePath, NodeProcess node)
+        public static List<string> ShouldCompileFiles(string sassFilePath)
         {
-            string css = await node.ExecuteProcess(sassFilePath);
-            string cssFilePath = Path.ChangeExtension(sassFilePath, ".css");
+            var legacyPath = "sass\\Legacy";
+            if (!sassFilePath.Contains(legacyPath)) return new List<string>{ "videsktop.scss"};
+            return new List<string> {"videsktop-black.scss", "videsktop-classic.scss", "videsktop-light.scss"};
+        }
+
+        public static async Tasks.Task Compile(string sassFilePath, string cssFilePath, NodeProcess node)
+        {
+            string css = await node.ExecuteProcess(sassFilePath, cssFilePath);
+            //string cssFilePath = Path.ChangeExtension(sassFilePath, ".css");
 
             bool exist = File.Exists(cssFilePath);
 

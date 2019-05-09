@@ -119,7 +119,8 @@ namespace SassConverter
 
             if (_node != null && CompilerService.ShouldCompile(e.FilePath) && _node.IsReadyToExecute())
             {
-                await CompilerService.Compile(e.FilePath, _node);
+                //
+                await CompilerService.Compile(e.FilePath, "", _node);
             }
         }
         /// <summary>

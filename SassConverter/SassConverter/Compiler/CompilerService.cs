@@ -34,28 +34,44 @@ namespace SassConverter
         public static List<string> ShouldCompileFiles(string sassFilePath)
         {
             var legacyPath = "sass\\Legacy";
-            if (!sassFilePath.Contains(legacyPath)) return new List<string>{ "videsktop.scss"};
-            return new List<string> {"videsktop-black.scss", "videsktop-classic.scss", "videsktop-light.scss"};
+            //var directoryName = Path.GetDirectoryName(sassFilePath);
+            var directoryName = sassFilePath.Substring(0, sassFilePath.LastIndexOf("\\sass\\"));
+            if (sassFilePath.Contains(legacyPath) || sassFilePath.Contains("sass\\videsktop-black.scss") || sassFilePath.Contains("sass\\videsktop-classic.scss") || sassFilePath.Contains("sass\\videsktop-light.scss")) {
+                return new List<string> {
+                    Path.Combine(directoryName, "videsktop-black.scss"),
+                    Path.Combine(directoryName, "videsktop-classic.scss"),
+                    Path.Combine(directoryName, "videsktop-light.scss")
+                };
+            }
+            if (sassFilePath.Contains("sass\\bootstrap") || sassFilePath.Contains("sass\\custom-cosmos") || sassFilePath.Contains("sass\\custom-vi") || sassFilePath.Contains("sass\\videsktop.scss")) {
+             return new List<string>{ Path.Combine(directoryName,"videsktop.scss")};
+            }
+            return new List<string>();
         }
 
-        public static async Tasks.Task Compile(string sassFilePath, string cssFilePath, NodeProcess node)
+        public static async Tasks.Task Compile(string sassFilePath, string cssDirectoryName, NodeProcess node)
         {
-            string css = await node.ExecuteProcess(sassFilePath, cssFilePath);
-            //string cssFilePath = Path.ChangeExtension(sassFilePath, ".css");
-
-            bool exist = File.Exists(cssFilePath);
-
-            if (exist)
+            var cssFullDirectoryName = sassFilePath.Substring(0, sassFilePath.LastIndexOf("\\sass\\"));
+            var compileFiles = ShouldCompileFiles(sassFilePath);
+            foreach(var sassFile in compileFiles)
             {
-                string oldCss = File.ReadAllText(cssFilePath);
+                string css = await node.ExecuteProcess(sassFilePath);
+                string cssFilePath = Path.ChangeExtension(sassFilePath, ".css").Replace("\\sass\\", "\\"+cssDirectoryName+"\\");
 
-                if (oldCss == css)
-                    return;
+                bool exist = File.Exists(cssFilePath);
+
+                if (exist)
+                {
+                    string oldCss = File.ReadAllText(cssFilePath);
+
+                    if (oldCss == css)
+                        return;
+                }
+
+                VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
+                File.WriteAllText(cssFilePath, css);
+                    //VsHelpers.AddNestedFile(sassFilePath, cssFilePath);
             }
-
-            VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
-            File.WriteAllText(cssFilePath, css);
-            //VsHelpers.AddNestedFile(sassFilePath, cssFilePath);
         }
 
         //public static async Tasks.Task Install(NodeProcess node)

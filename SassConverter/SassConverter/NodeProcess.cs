@@ -74,7 +74,7 @@ namespace SassConverter
             //return success;
         }
 
-        public async Task<string> ExecuteProcess(string filePath, string cssFilePath)
+        public async Task<string> ExecuteProcess(string filePath)
         {
             if (!EnsurePackageInstalled())
                 return null;
@@ -83,7 +83,7 @@ namespace SassConverter
             var args = @"C:\inetpub\wwwroot\viDesktopDev\sass\videsktop.scss C:\inetpub\wwwroot\viDesktopDev\css\jack.css";
             //    //System.Diagnostics.Process.Start("sass", args);
             //var start = new ProcessStartInfo("cmd", $"/c \"\"{_executable}\" \"{fileName}\" --relative-urls --autoprefix=\">1%\" --csscomb=zen\"")
-            var start = new ProcessStartInfo("cmd", $"/c \"\"{_executable}\" \" {args}\"")
+            var start = new ProcessStartInfo("cmd", $"/c \"\"{_executable}\" \" {filePath}\"")
             {
                 WorkingDirectory = Path.GetDirectoryName(filePath),
                 UseShellExecute = false,

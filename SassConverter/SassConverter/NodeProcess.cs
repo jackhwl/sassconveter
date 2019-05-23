@@ -80,10 +80,8 @@ namespace SassConverter
                 return null;
 
             string fileName = Path.GetFileName(filePath);
-            var args = @"C:\inetpub\wwwroot\viDesktopDev\sass\videsktop.scss C:\inetpub\wwwroot\viDesktopDev\css\jack.css";
-            //    //System.Diagnostics.Process.Start("sass", args);
-            //var start = new ProcessStartInfo("cmd", $"/c \"\"{_executable}\" \"{fileName}\" --relative-urls --autoprefix=\">1%\" --csscomb=zen\"")
-            var start = new ProcessStartInfo("cmd", $"/c \"\"{_executable}\" \" {filePath}\"")
+            var option = " -l --style compact ";
+            var start = new ProcessStartInfo("cmd", $"/c \"\"{_executable}\" {option} \"{filePath}\"\"")
             {
                 WorkingDirectory = Path.GetDirectoryName(filePath),
                 UseShellExecute = false,
@@ -99,12 +97,15 @@ namespace SassConverter
 
                 using (var proc = Process.Start(start))
                 {
+                    var lines = 0;
                     while (!proc.StandardOutput.EndOfStream)
                     {
                         string line = await proc.StandardOutput.ReadLineAsync();
                         sb.AppendLine(line);
+                        lines++;
                     }
 
+                    Logger.Log("total 1:" + lines.ToString());
                     return sb.ToString();
                 }
             }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="vi desktop: c9c0658c-3193-4dfb-88a4-cddd8c3c96a3" Version="1.55" Language="en-US" Publisher="Wenlin Huang" />
+        <Identity Id="vi desktop: c9c0658c-3193-4dfb-88a4-cddd8c3c96a3" Version="1.57" Language="en-US" Publisher="Wenlin Huang" />
         <DisplayName>SassConverter</DisplayName>
-        <Description xml:space="preserve">Sass Converter to replace Mindscape Web Workbench extension in Visual Studio 2017, convert non-legacy scss file only.</Description>
+        <Description xml:space="preserve">Sass Converter to replace Mindscape Web Workbench extension in Visual Studio 2017.</Description>
         <Tags>sass, ruby, css</Tags>
     </Metadata>
     <Installation>

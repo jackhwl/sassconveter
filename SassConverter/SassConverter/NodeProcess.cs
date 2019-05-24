@@ -23,7 +23,9 @@ namespace SassConverter
 
         public bool IsReadyToExecute()
         {
-            return File.Exists(_executable);
+            if (File.Exists(_executable)) return true;
+            Logger.Log("Rube file not found " + _executable);
+            return false;
         }
 
         public bool EnsurePackageInstalled()
@@ -74,7 +76,7 @@ namespace SassConverter
             //return success;
         }
 
-        public async Task<string> ExecuteProcess(string filePath)
+        public async Task<string> ExecuteProcessAsync(string filePath)
         {
             if (!EnsurePackageInstalled())
                 return null;
@@ -105,7 +107,6 @@ namespace SassConverter
                         lines++;
                     }
 
-                    Logger.EventLog("total 2:" + lines.ToString());
                     Logger.Log("total 1:" + lines.ToString());
                     return sb.ToString();
                 }
@@ -117,6 +118,44 @@ namespace SassConverter
             }
         }
 
+        public async Task<string> ExecuteProcessLegacyAsync(string projectDirectoryPath, string filePath)
+        {
+            if (!EnsurePackageInstalled())
+                return null;
+
+            string fileName = "sass\\" + Path.GetFileName(filePath);
+            var start = new ProcessStartInfo("cmd", $"/c compass compile {fileName}")
+            {
+                WorkingDirectory = projectDirectoryPath,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true
+            };
+
+            try
+            {
+                var sb = new StringBuilder();
+
+                using (var proc = Process.Start(start))
+                {
+                    var lines = 0;
+                    while (!proc.StandardOutput.EndOfStream)
+                    {
+                        string line = await proc.StandardOutput.ReadLineAsync();
+                        sb.AppendLine(line);
+                        lines++;
+                    }
+
+                    Logger.Log(sb.ToString());
+                    return sb.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                return null;
+            }
+        }
         private static void ModifyPathVariable(ProcessStartInfo start)
         {
             string path = start.EnvironmentVariables["PATH"];

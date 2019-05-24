@@ -38,12 +38,12 @@ namespace SassConverter
             //var directoryName = Path.GetDirectoryName(sassFilePath);
             var directoryName = sassFilePath.Substring(0, sassFilePath.LastIndexOf("\\sass\\"))+"\\sass\\";
             if (sassFilePath.Contains(legacyPath) || sassFilePath.Contains("sass\\videsktop-black.scss") || sassFilePath.Contains("sass\\videsktop-classic.scss") || sassFilePath.Contains("sass\\videsktop-light.scss")) {
-                Logger.Log("SassConvert in VS2017 only convert non-legacy scss file; use VS2015 to convert legacy scss file.");
-                //return new List<string> {
-                //    Path.Combine(directoryName, "videsktop-black.scss"),
-                //    Path.Combine(directoryName, "videsktop-classic.scss"),
-                //    Path.Combine(directoryName, "videsktop-light.scss")
-                //};
+                //Logger.Log("SassConvert in VS2017 only convert non-legacy scss file; use VS2015 to convert legacy scss file.");
+                return new List<string> {
+                    Path.Combine(directoryName, "videsktop-black.scss"),
+                    Path.Combine(directoryName, "videsktop-classic.scss"),
+                    Path.Combine(directoryName, "videsktop-light.scss")
+                };
             }
             if (sassFilePath.Contains("sass\\bootstrap") || sassFilePath.Contains("sass\\custom-cosmos") || sassFilePath.Contains("sass\\custom-vi") || sassFilePath.Contains("sass\\videsktop.scss")) {
              return new List<string>{ Path.Combine(directoryName,"videsktop.scss")};
@@ -54,28 +54,35 @@ namespace SassConverter
         public static async Tasks.Task Compile(string sassFilePath, string cssDirectoryName, NodeProcess node)
         {
             var compileFiles = ShouldCompileFiles(sassFilePath);
+            var projectDirectoryPath = sassFilePath.Substring(0, sassFilePath.LastIndexOf("\\sass\\"));
             try
             {
                 foreach (var sassFile in compileFiles)
                 {
-                    string css = await node.ExecuteProcess(sassFile);
-                    string cssFilePath = Path.ChangeExtension(sassFile, ".css").Replace("\\sass\\", "\\"+cssDirectoryName+"\\");
-
-                    bool exist = File.Exists(cssFilePath);
-
-                    if (exist)
+                    if (sassFile.IndexOf("videsktop-")>0)  // legacyCode
                     {
-                        string oldCss = File.ReadAllText(cssFilePath);
-
-                        if (oldCss == css)
-                            return;
+                        string cssFilePath = Path.ChangeExtension(sassFile, ".css").Replace("\\sass\\", "\\"+cssDirectoryName+"\\");
+                        VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
+                        await node.ExecuteProcessLegacyAsync(projectDirectoryPath, sassFile);
                     }
-                    Logger.EventLog("before checkout for edit");
-                    VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
-                    Logger.EventLog("after checkout for edit");
-                    Logger.EventLog("write to file: " + cssFilePath);
-                    File.WriteAllText(cssFilePath, css);
-                        //VsHelpers.AddNestedFile(sassFilePath, cssFilePath);
+                    else
+                    {
+                        string css = await node.ExecuteProcessAsync(sassFile);
+                        string cssFilePath = Path.ChangeExtension(sassFile, ".css").Replace("\\sass\\", "\\"+cssDirectoryName+"\\");
+
+                        bool exist = File.Exists(cssFilePath);
+
+                        if (exist)
+                        {
+                            string oldCss = File.ReadAllText(cssFilePath);
+
+                            if (oldCss == css)
+                                return;
+                        }
+                        VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
+                        File.WriteAllText(cssFilePath, css);
+                            //VsHelpers.AddNestedFile(sassFilePath, cssFilePath);
+                    }
                 }
             }
             catch (Exception ex)

@@ -70,8 +70,10 @@ namespace SassConverter
                         if (oldCss == css)
                             return;
                     }
-
+                    Logger.EventLog("before checkout for edit");
                     VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
+                    Logger.EventLog("after checkout for edit");
+                    Logger.EventLog("write to file: " + cssFilePath);
                     File.WriteAllText(cssFilePath, css);
                         //VsHelpers.AddNestedFile(sassFilePath, cssFilePath);
                 }
@@ -79,6 +81,7 @@ namespace SassConverter
             catch (Exception ex)
             {
                 Logger.Log(ex);
+                Logger.EventLog("method Compile: " + ex.Message);
             }
         }
 

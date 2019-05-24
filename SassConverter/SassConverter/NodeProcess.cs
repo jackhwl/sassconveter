@@ -105,6 +105,7 @@ namespace SassConverter
                         lines++;
                     }
 
+                    Logger.EventLog("total 2:" + lines.ToString());
                     Logger.Log("total 1:" + lines.ToString());
                     return sb.ToString();
                 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,15 @@ using Microsoft.VisualStudio.Shell.Interop;
             }
         }
 
+        public static void EventLog(string message)
+        {
+            using (EventLog eventLog = new EventLog("Application")) 
+            {
+                eventLog.Source = "Application"; 
+                eventLog.WriteEntry("sassconverter Log message: " + message, EventLogEntryType.Error, 911, 1); 
+            }
+
+        }
         private static bool EnsurePane()
         {
             if (_pane == null)

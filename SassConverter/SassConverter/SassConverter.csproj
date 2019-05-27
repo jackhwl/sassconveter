@@ -7,6 +7,10 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <UseCodebase>true</UseCodebase>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -60,7 +64,9 @@
     <Compile Include="Helpers\VsHelpers.cs" />
     <Compile Include="NodeProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SassConverterPackage.cs" />
+    <Compile Include="SassConverterPackage.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />

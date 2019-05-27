@@ -67,21 +67,25 @@ namespace SassConverter
                     }
                     else
                     {
-                        string css = await node.ExecuteProcessAsync(sassFile);
                         string cssFilePath = Path.ChangeExtension(sassFile, ".css").Replace("\\sass\\", "\\"+cssDirectoryName+"\\");
-
-                        bool exist = File.Exists(cssFilePath);
-
-                        if (exist)
-                        {
-                            string oldCss = File.ReadAllText(cssFilePath);
-
-                            if (oldCss == css)
-                                return;
-                        }
+                        string cssMapFilePath = cssFilePath + ".map";
                         VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
-                        File.WriteAllText(cssFilePath, css);
-                            //VsHelpers.AddNestedFile(sassFilePath, cssFilePath);
+                        VsHelpers.CheckFileOutOfSourceControl(cssMapFilePath);
+                        await node.ExecuteProcessAsync(projectDirectoryPath, sassFile);
+                        ////string cssFilePath = Path.ChangeExtension(sassFile, ".css").Replace("\\sass\\", "\\"+cssDirectoryName+"\\");
+
+                        ////bool exist = File.Exists(cssFilePath);
+
+                        ////if (exist)
+                        ////{
+                        ////    string oldCss = File.ReadAllText(cssFilePath);
+
+                        ////    if (oldCss == css)
+                        ////        return;
+                        ////}
+                        ////VsHelpers.CheckFileOutOfSourceControl(cssFilePath);
+                        ////File.WriteAllText(cssFilePath, css);
+                        ////    //VsHelpers.AddNestedFile(sassFilePath, cssFilePath);
                     }
                 }
             }
@@ -92,7 +96,8 @@ namespace SassConverter
             }
         }
 
-        // sass -l --style compact  ../sass/videsktop.scss ../css/jack.css
+        // sass -l --style compact  ..\sass/videsktop.scss ..\css/jack.css
+        // c:\dart-sass\sass.bat sass\videsktop.scss css\videsktop.css --style=compressed
 
 
         //public static async Tasks.Task Install(NodeProcess node)

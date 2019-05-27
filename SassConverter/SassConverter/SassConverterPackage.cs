@@ -13,11 +13,35 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
+using System.ComponentModel;
 
 using Task = System.Threading.Tasks.Task;
 
 namespace SassConverter
 {
+    public class OptionPageGrid : DialogPage
+    {
+        private string rubyFolder = @"C:\Ruby193\bin";
+        private string sassFolder = @"C:\dart-sass";
+
+        [Category("SassConverter")]
+        [DisplayName("Ruby folder")]
+        [Description("Ruby folder option")]
+        public string optionRubyFolder
+        {
+            get { return rubyFolder; }
+            set { rubyFolder = value; }
+        }
+
+        [Category("SassConverter")]
+        [DisplayName("Sass folder")]
+        [Description("Sass folder option")]
+        public string optionSassFolder
+        {
+            get { return sassFolder; }
+            set { sassFolder = value; }
+        }
+    }
     /// <summary>
     /// This is the class that implements the package exposed by this assembly.
     /// </summary>
@@ -40,6 +64,7 @@ namespace SassConverter
     [Guid(SassConverterPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
+    [ProvideOptionPage(typeof(OptionPageGrid), "SassConverter", "Parameters", 0, 0, true)]
     public sealed class SassConverterPackage : AsyncPackage
     {
         /// <summary>
@@ -67,19 +92,19 @@ namespace SassConverter
         ///// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
         ///// <param name="progress">A provider for progress updates.</param>
         ///// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
-        //protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
-        //{
-        //    // When initialized asynchronously, the current thread may be a background thread at this point.
-        //    // Do any initialization that requires the UI thread after switching to the UI thread.
-        //    await this.JoinableTaskFactory.SwitchToMainThreadAsync();
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        {
+            // When initialized asynchronously, the current thread may be a background thread at this point.
+            // Do any initialization that requires the UI thread after switching to the UI thread.
+            await this.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        //    var commandService = await GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-        //    var dte = await GetServiceAsync(typeof(DTE)) as DTE2;
-        //    //var args = @"C:\inetpub\wwwroot\viDesktopDev\sass\videsktop.scss C:\inetpub\wwwroot\viDesktopDev\css\jack.css";
-        //    //System.Diagnostics.Process.Start("sass", args);
-        //    await Command.InitializeAsync(this);
-        //    //Instance = new DiffFilesCommand(commandService, dte);
-        //}
+            //var commandService = await GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            //var dte = await GetServiceAsync(typeof(DTE)) as DTE2;
+            ////var args = @"C:\inetpub\wwwroot\viDesktopDev\sass\videsktop.scss C:\inetpub\wwwroot\viDesktopDev\css\jack.css";
+            ////System.Diagnostics.Process.Start("sass", args);
+            //await Command.InitializeAsync(this);
+            ////Instance = new DiffFilesCommand(commandService, dte);
+        }
 
         //#endregion
     }

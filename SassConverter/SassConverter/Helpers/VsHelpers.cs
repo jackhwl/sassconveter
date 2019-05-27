@@ -18,13 +18,14 @@ namespace SassConverter
 
             if (DTE.SourceControl.IsItemUnderSCC(file) && !DTE.SourceControl.IsItemCheckedOut(file))
                 DTE.SourceControl.CheckOutItem(file);
-
-            var info = new FileInfo(file)
-            {
-                IsReadOnly = false
-            };
+            if (new FileInfo(file).IsReadOnly)
+                EnsureFileIsWritable(file);
         }
 
+        public static void EnsureFileIsWritable(string filePath)
+        {
+            File.SetAttributes(filePath, FileAttributes.Normal);
+        }
         public static void AddFileToProject(this Project project, string file, string itemType = null)
         {
             if (project.IsKind(ProjectTypes.ASPNET_5, ProjectTypes.DOTNET_Core, ProjectTypes.SSDT))

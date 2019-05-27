@@ -22,4 +22,13 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A3B56E5-5DB1-4858-B7AC-7984EC26C3D9}
 	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://videvsql001:8080/tfs/videsktop
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = SassConverter\\SassConverter.csproj
+		SccProjectName1 = SassConverter
+		SccLocalPath1 = SassConverter
+	EndGlobalSection
 EndGlobal

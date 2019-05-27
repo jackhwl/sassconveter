@@ -11,9 +11,8 @@ namespace SassConverter
     internal class NodeProcess
     {
         public const string Packages = "less less-plugin-autoprefix less-plugin-csscomb";
-
-        private static string _installDir = @"C:\Ruby193\bin"; // Path.Combine(Path.GetTempPath(), Vsix.Name.Replace(" ", ""), Packages.GetHashCode().ToString());
-        private static string _executable = Path.Combine(_installDir, "sass.bat");
+        private static string _executable = Path.Combine(new OptionPageGrid().optionRubyFolder, "sass.bat");
+        private static string _executableDartSass = Path.Combine(new OptionPageGrid().optionSassFolder, "sass.bat");
 
         //public bool IsInstalling
         //{
@@ -24,7 +23,13 @@ namespace SassConverter
         public bool IsReadyToExecute()
         {
             if (File.Exists(_executable)) return true;
-            Logger.Log("Rube file not found " + _executable);
+            Logger.Log("Rube file not found: " + _executable);
+            return false;
+        }
+        public bool IsReadyToExecuteDartSass()
+        {
+            if (File.Exists(_executableDartSass)) return true;
+            Logger.Log("Dart Sass file not found: " + _executableDartSass);
             return false;
         }
 
@@ -76,22 +81,19 @@ namespace SassConverter
             //return success;
         }
 
-        public async Task<string> ExecuteProcessAsync(string filePath)
+        public async Task<string> ExecuteProcessAsync(string projectDirectoryPath, string filePath)
         {
-            if (!EnsurePackageInstalled())
+            if (!IsReadyToExecuteDartSass())
                 return null;
-
-            string fileName = Path.GetFileName(filePath);
-            var option = " -l --style compact ";
-            var start = new ProcessStartInfo("cmd", $"/c \"\"{_executable}\" {option} \"{filePath}\"\"")
+            string fileName = "sass\\" + Path.GetFileName(filePath);
+            string cssFileName = "css\\" + Path.GetFileNameWithoutExtension(filePath) + ".css";
+            var start = new ProcessStartInfo("cmd", $"/c {_executableDartSass} {fileName} {cssFileName} --style=compressed")
             {
-                WorkingDirectory = Path.GetDirectoryName(filePath),
+                WorkingDirectory = projectDirectoryPath,
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true
             };
-
-            ModifyPathVariable(start);
 
             try
             {
@@ -107,7 +109,8 @@ namespace SassConverter
                         lines++;
                     }
 
-                    Logger.Log("total 1:" + lines.ToString());
+                    Logger.Log(sb.ToString());
+                    Logger.Log(lines.ToString());
                     return sb.ToString();
                 }
             }

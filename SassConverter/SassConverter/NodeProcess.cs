@@ -14,12 +14,6 @@ namespace SassConverter
         private static string _executable = Path.Combine(new OptionPageGrid().optionRubyFolder, "sass.bat");
         private static string _executableDartSass = Path.Combine(new OptionPageGrid().optionSassFolder, "sass.bat");
 
-        //public bool IsInstalling
-        //{
-        //    get;
-        //    private set;
-        //}
-
         public bool IsReadyToExecute()
         {
             if (File.Exists(_executable)) return true;
@@ -36,49 +30,6 @@ namespace SassConverter
         public bool EnsurePackageInstalled()
         {
             return IsReadyToExecute();
-            //if (IsInstalling)
-            //    return false;
-
-            //if (IsReadyToExecute())
-            //    return true;
-
-            //bool success = await Task.Run(() =>
-            //{
-            //    IsInstalling = true;
-
-            //    try
-            //    {
-            //        if (!Directory.Exists(_installDir))
-            //            Directory.CreateDirectory(_installDir);
-
-            //        var start = new ProcessStartInfo("cmd", $"/c npm install {Packages} --no-optional")
-            //        {
-            //            WorkingDirectory = _installDir,
-            //            UseShellExecute = false,
-            //            RedirectStandardOutput = true,
-            //            CreateNoWindow = true,
-            //        };
-
-            //        ModifyPathVariable(start);
-
-            //        using (var proc = Process.Start(start))
-            //        {
-            //            proc.WaitForExit();
-            //            return proc.ExitCode == 0;
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Logger.Log(ex);
-            //        return false;
-            //    }
-            //    finally
-            //    {
-            //        IsInstalling = false;
-            //    }
-            //});
-
-            //return success;
         }
 
         public async Task<string> ExecuteProcessAsync(string projectDirectoryPath, string filePath)
@@ -108,9 +59,16 @@ namespace SassConverter
                         sb.AppendLine(line);
                         lines++;
                     }
-
-                    Logger.Log(sb.ToString());
-                    Logger.Log(lines.ToString());
+                    if (proc.ExitCode != 0)
+                    {
+                        Logger.Log("exited with status code " + proc.ExitCode);
+                        Logger.Log(sb.ToString());
+                        Logger.Log(lines.ToString());
+                    }
+                    else
+                    {
+                        Logger.Log(cssFileName + " generated.");
+                    }
                     return sb.ToString();
                 }
             }
@@ -147,6 +105,16 @@ namespace SassConverter
                         string line = await proc.StandardOutput.ReadLineAsync();
                         sb.AppendLine(line);
                         lines++;
+                    }
+                    if (proc.ExitCode != 0)
+                    {
+                        Logger.Log("exited with status code " + proc.ExitCode);
+                        Logger.Log(sb.ToString());
+                        Logger.Log(lines.ToString());
+                    }
+                    else
+                    {
+                        Logger.Log(fileName + " generated.");
                     }
 
                     Logger.Log(sb.ToString());

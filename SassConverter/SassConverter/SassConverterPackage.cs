@@ -21,26 +21,15 @@ namespace SassConverter
 {
     public class OptionPageGrid : DialogPage
     {
-        private string rubyFolder = @"C:\Ruby193\bin";
-        private string sassFolder = @"C:\dart-sass";
-
         [Category("SassConverter")]
         [DisplayName("Ruby folder")]
         [Description("Ruby folder option")]
-        public string optionRubyFolder
-        {
-            get { return rubyFolder; }
-            set { rubyFolder = value; }
-        }
+        public string optionRubyFolder { get; set; } = @"C:\Ruby193\bin";
 
         [Category("SassConverter")]
         [DisplayName("Sass folder")]
         [Description("Sass folder option")]
-        public string optionSassFolder
-        {
-            get { return sassFolder; }
-            set { sassFolder = value; }
-        }
+        public string optionSassFolder { get; set; } = @"C:\dart-sass";
     }
     /// <summary>
     /// This is the class that implements the package exposed by this assembly.
@@ -97,13 +86,6 @@ namespace SassConverter
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            //var commandService = await GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            //var dte = await GetServiceAsync(typeof(DTE)) as DTE2;
-            ////var args = @"C:\inetpub\wwwroot\viDesktopDev\sass\videsktop.scss C:\inetpub\wwwroot\viDesktopDev\css\jack.css";
-            ////System.Diagnostics.Process.Start("sass", args);
-            //await Command.InitializeAsync(this);
-            ////Instance = new DiffFilesCommand(commandService, dte);
         }
 
         //#endregion
